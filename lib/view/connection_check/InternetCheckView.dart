@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 class InternetCheckView extends StatelessWidget {
   const InternetCheckView({Key? key}) : super(key: key);
 

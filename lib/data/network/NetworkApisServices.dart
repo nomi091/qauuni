@@ -1,94 +1,200 @@
+
+
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:http/http.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:qauuni/data/app_exception.dart';
-import 'package:qauuni/data/network/BaseApiServices.dart';
-import 'package:http/http.dart' as http;
 
-class NetworkApisService extends BaseApiService {
-  //Get Request
+class NetworkApiService {
   @override
-  Future<dynamic> getGetApiReponce(String url) async {
+  Future getApiResponse(String url, bool tokentrue, String? token,
+      dynamic queryParameters) async {
     dynamic responceJson;
     try {
-      final responce =
-          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 30));
+      if (kDebugMode) {
+        print('In Dio in try');
+        print(url);
+        print(tokentrue.toString());
+        print(token.toString());
+        print('In Dio in try');
+      }
+      Dio dio = Dio();
+      if (tokentrue == true) {
+        // dio.options.headers['Accept'] = 'application/json';
+        dio.options.headers["Authorization"] = "Bearer $token";
+        dio.options.headers['Content'] = 'application/json';
+      } else {
+        dio.options.headers['Content'] = 'application/json';
+      }
+      Response responce = await dio
+          .get(url, queryParameters: queryParameters)
+          .timeout(const Duration(seconds: 20));
+      BaseOptions(validateStatus: (statusCode) {
+        if (statusCode == 422) {
+          return true;
+        }
+        if (statusCode == 200) {
+          return true;
+        }
+        return false;
+      });
+
       responceJson = returnResponce(responce);
-      // print(responce);
-    } on SocketException {
-      throw FetchDataException("No Internet Connection");
+      debugPrint(responce.statusCode.toString());
+    } on DioError catch (e) {
+      returnExceptionError(e);
     }
     return responceJson;
   }
 
   @override
-  Future<dynamic> postApiReponce(String url, dynamic data) async {
+  Future postApiResponse(
+      String url, dynamic data, bool tokentrue, String? token) async {
     dynamic responceJson;
     try {
-      Response response = await http
-          .post(Uri.parse(url), body: data)
-          .timeout(const Duration(seconds: 20));
-      responceJson = returnResponce(response);
-    } on SocketException {
-      throw FetchDataException("No Internet Connection");
-    }
-    return responceJson;
-  }
-
-  //Post Request for Bus Route Data
-
-  @override
-  Future<dynamic> postApiReponceBusRouteData(String url, dynamic data) async {
-    dynamic responceJson;
-    try {
-      Response response = await http
+      // print('here 222');
+      if (kDebugMode) {
+        print('In Dio in try');
+        print(url);
+        print(data.toString());
+        print(tokentrue.toString());
+        print(token.toString());
+        print('In Dio in try');
+      }
+      Dio dio = Dio(BaseOptions(validateStatus: (statusCode) {
+        if (statusCode == 422) {
+          return true;
+        }
+        if (statusCode == 200) {
+          return true;
+        }
+        return false;
+      }));
+      if (tokentrue == true) {
+        // dio.options.headers['content-Type'] = 'application/json';
+        // dio.options.headers['Accept'] = 'application/json';
+        dio.options.headers["authorization"] = "Bearer $token";
+      } else {
+        dio.options.headers['Accept'] = 'application/json';
+      }
+      // print('responceJson.toString()');
+      Response responce = await dio
           .post(
-            Uri.parse("$url?shift_id=$data"),
+            url,
+            data: data,
           )
           .timeout(const Duration(seconds: 20));
-      responceJson = returnResponce(response);
-    } on SocketException {
-      throw FetchDataException("No Internet Connection");
+
+      debugPrint('.toString()');
+      responceJson = returnResponce(responce);
+      debugPrint(responce.toString());
+    } on DioError catch (e) {
+      returnExceptionError(e);
     }
+
     return responceJson;
   }
 
-//Get My Items Data
+  /// Put Api response
+  ///
   @override
-  Future<dynamic> postApiReponceMyItemData(String url, dynamic data) async {
+  Future putApiResponse(
+      String url, dynamic data, bool tokentrue, String? token) async {
     dynamic responceJson;
-
     try {
-      Response response = await http
-          .post(
-            Uri.parse(url),
-            body: jsonEncode(<String, String>{
-              'user_id': data.toString(),
-            }),
+      print('here 222');
+      if (kDebugMode) {
+        print('In Dio in try');
+        print(url);
+        print(data.toString());
+        print(tokentrue.toString());
+        print(token.toString());
+        print('In Dio in try');
+      }
+      print(token);
+      Dio dio = Dio();
+      if (tokentrue == true) {
+        dio.options.headers['content-Type'] = 'application/json';
+        dio.options.headers['Accept'] = 'application/json';
+        dio.options.headers["access-token"] = "$token";
+      } else {
+        dio.options.headers['Accept'] = 'application/json';
+      }
+      print(url);
+      Response responce = await dio
+          .put(
+            url,
+            data: data,
           )
           .timeout(const Duration(seconds: 20));
-      responceJson = returnResponce(response);
-    } on SocketException {
-      throw FetchDataException("No Internet Connection");
+      debugPrint('.toString()');
+      responceJson = returnResponce(responce);
+
+      debugPrint(responce.toString());
+    } on DioError catch (e) {
+      returnExceptionError(e);
     }
     return responceJson;
   }
-//Mark Found Item
 
-  dynamic returnResponce(http.Response response) {
-    switch (response.statusCode) {
+  /// delete Api response
+  ///
+  @override
+  Future deleteApiResponse(String url, String? token) async {
+    dynamic responceJson;
+    try {
+      if (kDebugMode) {
+        print('In Dio in Delete Api responce');
+        print(url);
+        print(token.toString());
+        print('In Dio in Delete Api responce');
+      }
+      Dio dio = Dio();
+      dio.options.headers['Accept'] = 'application/json';
+      dio.options.headers["Authorization"] = "Bearer $token";
+      Response responce =
+          await dio.delete(url).timeout(const Duration(seconds: 20));
+
+      responceJson = returnResponce(responce);
+    } on DioError catch (e) {
+      returnExceptionError(e);
+    }
+    return responceJson;
+  }
+
+  dynamic returnResponce(Response responce) {
+    switch (responce.statusCode) {
       case 200:
-        dynamic responceJson = jsonDecode(response.body);
-        print(responceJson.toString());
-
+        dynamic responceJson = jsonDecode(responce.toString());
         return responceJson;
-      case 400:
-        throw BadRequestException(response.body.toString());
-      case 404:
-        throw UnauthorisedException(response.body.toString());
-      default:
-        print(response.body.toString());
+      case 422:
+        dynamic responceJson = jsonDecode(responce.toString());
+        return responceJson;
     }
   }
+
+  dynamic returnExceptionError(e) {
+    if (kDebugMode) {
+      print('e.toString() e.toString()111111111');
+      print(e.response!.statusCode.toString());
+      print(e.toString());
+    }
+    if (e.isNoConnectionError) {
+      throw FetchDataException('No Internet Conection');
+    } else if (e.response!.statusCode == 422) {
+      dynamic responceJson = jsonDecode(e.responce.toString());
+      return responceJson;
+    } else if (e.response!.data['message'] == 500) {
+      throw FetchDataException('');
+    } else {
+      throw FetchDataException('${e.response!.statusCode}');
+    }
+  }
+}
+
+extension DioErrorX on DioError {
+  bool get isNoConnectionError =>
+      type == DioErrorType.other &&
+      error is SocketException; // import 'dart:io' for SocketException
 }

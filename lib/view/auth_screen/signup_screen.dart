@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:qauuni/utils/utils.dart';
 import 'package:qauuni/view/lost_find/add_lost_find.dart';
-import 'package:qauuni/view_model/auth_view_model.dart';
+import 'package:qauuni/view_model/auth/auth_view_model.dart';
 import 'package:validators/validators.dart';
-import 'dart:ui';
 
 import '../../routes/route.dart';
 import '../../utils/color.dart';
@@ -29,15 +25,16 @@ class _SignupScreenState extends State<SignupScreen>
 
   final myControllerEmail = TextEditingController();
   final myControllerPassword = TextEditingController();
-  final myControlleruserName = TextEditingController();
+  final myControllerUserName = TextEditingController();
+  final myControllerUserLocation = TextEditingController();
   bool isloading = false;
-  bool _passwordVisible = true;
+  final bool _passwordVisible = true;
 
   @override
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 4),
+      duration: const Duration(seconds: 4),
     );
 
     _opacity = Tween<double>(begin: 0, end: 1).animate(
@@ -61,20 +58,25 @@ class _SignupScreenState extends State<SignupScreen>
   }
 
   @override
-  void dispose() {
-    myControlleruserName.dispose();
-    myControllerEmail.dispose();
-    myControllerPassword.dispose();
-    _controller.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   myControlleruserName.dispose();
+  //   myControllerEmail.dispose();
+  //   myControllerPassword.dispose();
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
   bool validData() {
     if (!isEmail(myControllerEmail.text)) {
       Utils.flushBarErrorMessage('Enter Valid Email Address', context);
       return false;
     }
-    if ((myControlleruserName.text == "")) {
+    if ((myControllerUserName.text == "")) {
+      Utils.flushBarErrorMessage('Please Enter User Name', context);
+
+      return false;
+    }
+    if ((myControllerUserLocation.text == "")) {
       Utils.flushBarErrorMessage('Please Enter User Name', context);
 
       return false;
@@ -178,7 +180,7 @@ class _SignupScreenState extends State<SignupScreen>
                                       hintText: 'User Name...',
                                       isPassword: false,
                                       isEmail: true,
-                                      textediting: myControlleruserName,
+                                      textediting: myControllerUserName,
                                     ),
                                     component(
                                       icon: Icons.email_outlined,
@@ -191,8 +193,15 @@ class _SignupScreenState extends State<SignupScreen>
                                       icon: Icons.phone,
                                       hintText: 'Contact...',
                                       isPassword: false,
-                                      isEmail: true,
+                                      isEmail: false,
                                       textediting: myControllerPhone,
+                                    ),
+                                    component(
+                                      icon: Icons.location_on,
+                                      hintText: 'Location...',
+                                      isPassword: false,
+                                      isEmail: false,
+                                      textediting: myControllerUserLocation,
                                     ),
                                     component(
                                         icon: Icons.lock_outline,
@@ -202,35 +211,35 @@ class _SignupScreenState extends State<SignupScreen>
                                         textediting: myControllerPassword),
 
                                     //  SizedBox(height: size.width * .2),
-                                    InkWell(
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () {
-                                        setState(() {
-                                          isloading = true;
-                                        });
-
-                                        if (validData() == true) {
-                                          Map data = {
-                                            'name': myControlleruserName,
-                                            'email': myControllerEmail.text,
-                                            'contact': myControllerPhone,
-                                            'password':
-                                                myControllerPassword.text,
-                                          };
-                                          authViewModel.signUpApis(
-                                              data, context);
-                                        } else {
-                                          setState(() {
-                                            isloading = false;
-                                          });
-                                        }
-                                      },
-                                      child: Container(
-                                        //color: Colors.amber,
-                                        child: Column(
-                                          children: [
-                                            Container(
+                                    Column(
+                                      children: [
+                                        Consumer<AuthViewModel>(
+                                            builder: (context, value, child) {
+                                          return InkWell(
+                                            onTap: () {
+                                              if (validData()) {
+                                                Map data = {
+                                                  'name':
+                                                      myControllerUserName.text,
+                                                  'email':
+                                                      myControllerEmail.text,
+                                                  'contact':
+                                                      myControllerPhone.text,
+                                                  'address':
+                                                      myControllerPhone.text,
+                                                  'password':
+                                                      myControllerPassword.text,
+                                                };
+                                                if (value.loginloading ==
+                                                    false) {
+                                                  authViewModel.signUpApis(
+                                                      data, context);
+                                                }
+                                                print('isLoading ${value.loginloading}'
+                                                 );
+                                              }
+                                            },
+                                            child: Container(
                                               margin: EdgeInsets.only(
                                                 bottom: size.width * .05,
                                               ),
@@ -242,28 +251,33 @@ class _SignupScreenState extends State<SignupScreen>
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               ),
-                                              child: const Text(
-                                                'Sign-Up',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
+                                              child: value.loginloading == true
+                                                  ? const CircularProgressIndicator()
+                                                  : const Text(
+                                                      'Sign-Up',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
                                             ),
-                                            InkWell(
-                                                onTap: () {
-                                                  Get.toNamed(Routes.login);
-                                                },
-                                                child: text(
-                                                    title: "Log-In",
-                                                    color: Colors.black,
-                                                    fontsize: 17.0,
-                                                    fontweight:
-                                                        FontWeight.bold)),
-                                          ],
-                                        ),
-                                      ),
+                                          );
+                                        }),
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.pushNamed(
+                                                context,
+                                                Routes.login,
+                                              );
+                                            },
+                                            child: text(
+                                                title: "Log-In",
+                                                color: Colors.black,
+                                                fontsize: 17.0,
+                                                fontweight: FontWeight.bold)),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -352,12 +366,13 @@ class _SignupScreenState extends State<SignupScreen>
         width: size.width / width,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color(0xff4796ff),
+          color: const Color(0xff4796ff),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           string,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
     );

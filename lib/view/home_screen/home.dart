@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
 import '../../routes/route.dart';
 import '../../widgets/home_contaner.dart';
 import '../../widgets/text.dart';
 import '../drawer_screen/drawer.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -13,10 +12,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
-  // List<ExploreModel> listItem = [];
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+  @override
   void initState() {
-    // listItem = _searchResult();
     super.initState();
   }
 
@@ -26,8 +24,7 @@ class _HomeState extends State<Home> {
     return SafeArea(
         child: Scaffold(
             key: _scaffoldkey,
-            drawer: Container(
-                //      color: Colors.amber,
+            drawer: SizedBox(
                 width: size.width * 0.7,
                 child: const Drawer(child: DrawerData())),
             body: Stack(children: [
@@ -45,14 +42,6 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-
-                // width: 120.0,
-                // decoration: const BoxDecoration(
-                //   image: DecorationImage(
-                //     image: AssetImage('assets/background.jpeg'),
-                //     fit: BoxFit.fitWidth,
-                //   ),
-                // ),
               ),
               SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -96,27 +85,22 @@ class _HomeState extends State<Home> {
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                // boxShadow: [
-                                //   BoxShadow(
-                                //     color:
-                                //         const Color.fromARGB(255, 214, 210, 210)
-                                //             .withOpacity(0.2),
-                                //     offset: Offset(2.0, 2.0),
-                                //     spreadRadius: 5,
-                                //     blurRadius: 20.0,
-                                //   ),
-                                // ],
+                          
                               ),
                               child: CircleAvatar(
                                 radius: 22.0,
                                 backgroundColor: Colors.white,
-                                
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(50.0),
-                                  child: Image.asset('assets/logo2.png',width: 100,height: 100,),
+                                  child: Image.asset(
+                                    'assets/logo2.png',
+                                    width: 100,
+                                    height: 100,
+                                  ),
                                 ),
                               ),
                             )
+                         
                           ],
                         ),
                       ),
@@ -133,38 +117,15 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     height: size.height * 0.05,
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //   children: [
-                  //     InkWell(
-                  //       onTap: () {
-                  //        Get.to(const OnlineServices());
-                  //       },
-                  //       child: homeContaner(
-                  //           size: size,
-                  //           image: "delivery.png",
-                  //           txt: "Online Services"),
-                  //     ),
-                  //     InkWell(
-                  //       onTap: (){
-                  //         Get.to(const AdmissionHome());
-                  //       },
-                  //       child: homeContaner(
-                  //           size: size,
-                  //           image: "adminInfo.png",
-                  //           txt: "Admission Information"),
-                  //     ),
-                  //   ],
-                  // ),
-                  // SizedBox(
-                  //   height: size.height * 0.02,
-                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InkWell(
-                        onTap: (){
-                        Get.toNamed(Routes.busPoint);
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            Routes.busPoint,
+                          );
                         },
                         child: homeContaner(
                             size: size,
@@ -173,14 +134,15 @@ class _HomeState extends State<Home> {
                       ),
                       InkWell(
                         onTap: () {
-                         Get.toNamed(Routes.lostFind);
+                          Navigator.pushNamed(
+                            context,
+                            Routes.lostFind,
+                          );
                         },
                         child: homeContaner(
-                            size: size,
-                            image: "lost.png",
-                            txt: "Lost & Found"),
+                            size: size, image: "lost.png", txt: "Lost & Found"),
                       ),
-                    
+
                       // homeContaner(
                       //     size: size,
                       //     image: "kyc.png",

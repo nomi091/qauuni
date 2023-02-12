@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:qauuni/view_model/auth_view_model.dart';
+import 'package:qauuni/view_model/auth/auth_view_model.dart';
 import 'package:validators/validators.dart';
 import '../../routes/route.dart';
 import '../../utils/color.dart';
@@ -27,13 +26,13 @@ class _LoginScreenState extends State<LoginScreen>
   final myControllerPassword = TextEditingController();
   final myControlleruserName = TextEditingController();
   bool isloading = false;
-  bool _passwordVisible = true;
+  final bool _passwordVisible = true;
 
   @override
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 4),
+      duration: const Duration(seconds: 4),
     );
 
     _opacity = Tween<double>(begin: 0, end: 1).animate(
@@ -164,77 +163,118 @@ class _LoginScreenState extends State<LoginScreen>
                                 isEmail: false,
                                 isPassword: true,
                                 textediting: myControllerPassword),
-                            Container(
-                              //  color: Colors.amberAccent,
-                              alignment: Alignment.topLeft,
-                              width: size.width * .8,
-                              child: RichText(
-                                text: TextSpan(
-                                  text: 'Forgotten password?',
-                                  style: const TextStyle(
-                                    color: Colors.black,
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    //  color: Colors.amberAccent,
+                                    alignment: Alignment.topLeft,
+                                    // width: size.width * .8,
+                                    child: RichText(
+                                      text: TextSpan(
+                                        // text: 'Forgotten password?',
+                                        text: '',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            // HapticFeedback.lightImpact();
+                                            // Utils.flushBarErrorMessage(
+                                            //     "Incorrect Username or Password",
+                                            //     context);
+                                            Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                Routes.home,
+                                                (route) => false);
+                                          },
+                                      ),
+                                    ),
                                   ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      HapticFeedback.lightImpact();
-                                      Utils.flushBarErrorMessage(
-                                          "Incorrect Username or Password",
-                                          context);
-                                    },
-                                ),
+                                  Container(
+                                    //  color: Colors.amberAccent,
+                                    alignment: Alignment.topLeft,
+                                    // width: size.width * .8,
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: 'Login As Guest',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            HapticFeedback.lightImpact();
+                                            Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                Routes.home,
+                                                (route) => false);
+                                            // Utils.flushBarErrorMessage(
+                                            //     "Incorrect Username or Password",
+                                            //     context);
+                                          },
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             //  SizedBox(height: size.width * .2),
-                            InkWell(
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              onTap: () {
-                                // Get.toNamed(Routes.home);
-                                setState(() {
-                                  isloading = true;
-                                });
-                                // Get.toNamed(Routes.home);
-                                if (validData() == true) {
-                                  Map data = {
-                                    'email': myControllerEmail.text,
-                                    'password': myControllerPassword.text,
-                                  };
-                                  authViewModel.loginApi(data,context);
-                                } else {
-                                  setState(() {
-                                    isloading = false;
-                                  });
-                                }
-                              },
-                              child: Container(
-                                //color: Colors.amber,
-                                child: Column(
+
+                            Container(
+                              //color: Colors.amber,
+                              child: Consumer<AuthViewModel>(
+                                  builder: (context, value, child) {
+                                return Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        bottom: size.width * .05,
-                                      ),
-                                      height: size.width / 8,
-                                      width: size.width / 1.25,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: buttoncolor,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: const Text(
-                                        'Log-In',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
+                                    InkWell(
+                                      onTap: () {
+                                        if (validData() == true) {
+                                          Map data = {
+                                            'email': myControllerEmail.text,
+                                            'password':
+                                                myControllerPassword.text,
+                                          };
+                                          if (value.loginloading == false) {
+                                            authViewModel.loginApi(
+                                                data, context);
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          bottom: size.width * .05,
                                         ),
+                                        height: size.width / 8,
+                                        width: size.width / 1.25,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: buttoncolor,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: value.loginloading == true
+                                            ? const CircularProgressIndicator()
+                                            : const Text(
+                                                'Log-In',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                       ),
                                     ),
                                     InkWell(
                                         onTap: () {
-                                          Get.toNamed(Routes.singup);
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.singup,
+                                          );
                                         },
                                         child: text(
                                             title: "Sign-Up",
@@ -242,8 +282,8 @@ class _LoginScreenState extends State<LoginScreen>
                                             fontsize: 17.0,
                                             fontweight: FontWeight.bold)),
                                   ],
-                                ),
-                              ),
+                                );
+                              }),
                             ),
                           ],
                         ),
@@ -328,12 +368,13 @@ class _LoginScreenState extends State<LoginScreen>
         width: size.width / width,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color(0xff4796ff),
+          color: const Color(0xff4796ff),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           string,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
     );

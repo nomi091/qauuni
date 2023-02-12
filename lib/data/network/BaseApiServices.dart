@@ -1,8 +1,10 @@
-// ignore: file_names
 abstract class BaseApiService {
-  Future<dynamic> getGetApiReponce(String url);
-  Future<dynamic> postApiReponce(String url, dynamic data);
-  Future<dynamic> postApiReponceBusRouteData(String url, dynamic data);
-  Future<dynamic> postApiReponceMyItemData(String url, dynamic data);
-  // Future<dynamic>getNotFoundItemsData(String url);
+  Future<dynamic> getApiResponse(
+      String url, bool tokentrue, String? token, dynamic queryParameters);
+  Future<dynamic> postApiResponse(
+      String url, dynamic data, bool tokentrue, String? token);
+      Future<dynamic> putApiResponse(
+      String url, dynamic data, bool tokentrue, String? token);
+      Future<dynamic> deleteApiResponse(
+      String url, String? token);
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:qauuni/res/app_urls.dart';
 
 class PopUpOverLay extends StatefulWidget {
   var indexPass;
@@ -38,8 +38,8 @@ class PopUpOverLayState extends State<PopUpOverLay>
         child: ScaleTransition(
           scale: scaleAnimation,
           child: Container(
-              margin: EdgeInsets.all(20.0),
-              padding: EdgeInsets.all(15.0),
+              margin: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(15.0),
               height: 380.0,
               decoration: ShapeDecoration(
                   color: Colors.white,
@@ -51,7 +51,7 @@ class PopUpOverLayState extends State<PopUpOverLay>
                     padding: const EdgeInsets.only(left: 260.0),
                     child: GestureDetector(
                         onTap: () {
-                          Get.back();
+                          Navigator.pop(context);
                         },
                         child: const Icon(
                           Icons.close,
@@ -59,18 +59,27 @@ class PopUpOverLayState extends State<PopUpOverLay>
                         )),
                   ),
                   Container(
-                    padding: const EdgeInsets.only(left: 20),
-                    //  color: Colors.red,
-                    height: 200,
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Image.network(
-                        //"https://aremo8+rch.com/wp-content/uploads/2016/09/The-Details-That-Matter-Top-Things-Every-Luxury-Hotel-Room-Should-Have.png",
-                        "https://qiu.globalasias.com/icon/${widget.indexPass.image}",
-                        //  url+image[0]['image_name'],
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: 150,
-                        fit: BoxFit.fill),
-                  ),
+                      padding: const EdgeInsets.only(left: 20),
+                      //  color: Colors.red,
+                      height: 180,
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          child: FadeInImage(
+                              placeholder:
+                                  const AssetImage('assets/placeholder.png'),
+                              image: NetworkImage(
+                                "${AppUrl.baseUrlImage}icon/${widget.indexPass.image}",
+                              ),
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, object, trace) {
+                                return Image.asset(
+                                  "assets/placeholder.png",
+                                  width: 40,
+                                  fit: BoxFit.cover,
+                                );
+                              }))),
                   const SizedBox(
                     height: 13,
                   ),
@@ -84,19 +93,20 @@ class PopUpOverLayState extends State<PopUpOverLay>
                     ),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 5,
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: MediaQuery.of(context).size.width * 0.28,
-                    child: Center(
+                  Expanded(
+                    flex: 1,
+                    child: SingleChildScrollView(
                       child: Text(
                         widget.indexPass.detail.toString(),
+                        // 'this is test descriptuon i would  asdsaasdaasd as asd lkj hkhd s dsdlike to says you that why my life is fucked up and i dont have anything to talk aboutt there are lost of thisnadh that i can tell you but i lost my most precious thing i would love it i can not expalin to you that how much important is thats is much that shat is it and each and every thing is related to it but i wannt to tell you that do not phk me because your life is fuckup from every side hdsfj sdjfh sdjfh sudhf dshhgsd fjhsf idhf hsdfh hsdfh ',
                         style: const TextStyle(
-                            overflow: TextOverflow.clip,
+                            overflow: TextOverflow.ellipsis,
                             color: Colors.black,
                             fontSize: 13.0,
                             fontWeight: FontWeight.normal),
+                        maxLines: 40,
                       ),
                     ),
                   ),
