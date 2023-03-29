@@ -53,7 +53,7 @@ class _DrawerDataState extends State<DrawerData> {
                   children: [
                     const Center(
                       child: Image(
-                        image: AssetImage('assets/logo.png'),
+                        image: AssetImage('assets/logo2.png'),
                         height: 150,
                         width: 150,
                       ),

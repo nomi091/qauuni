@@ -85,7 +85,7 @@ class _AboutUsState extends State<AboutUs> {
                                   backgroundColor: Colors.white,
                                   radius: 100,
                                   child: Image(
-                                    image: AssetImage('assets/logo.png'),
+                                    image: AssetImage('assets/logo2.png'),
                                     height: 100,
                                   )), //CircleAvatar
                             ), //CircleAvatar

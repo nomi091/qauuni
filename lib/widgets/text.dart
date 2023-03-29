@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 Text text({title, fontsize, fontweight, color}) {
   return Text(
     title,
-    overflow: TextOverflow.ellipsis,
+    //overflow: TextOverflow.ellipsis,
     textAlign: TextAlign.start,
     style: TextStyle(
       fontSize: fontsize,

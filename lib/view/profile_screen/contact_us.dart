@@ -89,7 +89,7 @@ class _ContactUsState extends State<ContactUs> {
                                 //     "https://media.geeksforgeeks.org/wp-content/uploads/20210101144014/gfglogo.png"), //NetworkImage
                                 radius: 100,
                                 child: Image(
-                                  image: AssetImage('assets/logo.png'),
+                                  image: AssetImage('assets/logo2.png'),
                                   height: 100,
                                 )), //CircleAvatar
                           ), //CircleAvatar

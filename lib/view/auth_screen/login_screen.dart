@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen>
                     child: Padding(
                       padding: EdgeInsets.only(top: 50.0),
                       child: ImageIcon(
-                        AssetImage('assets/logo.png'),
+                        AssetImage('assets/logo2.png'),
                         size: 200.0,
                         color: Colors.white,
 
